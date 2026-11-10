@@ -116,7 +116,19 @@
 
 /* In thời khoá biểu gọn gàng */
 @media print {
+  /* Khổ A4 ngang, lề nhỏ để lưới tuần vừa đúng 1 trang */
+  @page { size: A4 landscape; margin: 8mm; }
   .no-print { display: none !important; }
-  body { background: #fff; }
-  .surface { box-shadow: none; }
+  html, body { background: #fff !important; }
+  .surface { box-shadow: none !important; }
+  /* Tắt hiệu ứng hiện dần (khi in, hiệu ứng không chạy nên nội dung bị trong suốt) */
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  /* Thu nhỏ lưới tuần để gói trong 1 trang A4 */
+  .print-fit { zoom: 0.72; }
+  .print-fit .sticky { position: static !important; }
 }
