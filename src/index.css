@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Hệ thống thiết kế · Lịch giảng dạy Khoa Hoá học
+   ============================================================ */
+@theme {
+  --font-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Màu thương hiệu: xanh ngọc (teal) – gợi phòng thí nghiệm */
+  --color-brand-50: #ecfdf8;
+  --color-brand-100: #d1faee;
+  --color-brand-200: #a7f0dc;
+  --color-brand-300: #6ee0c4;
+  --color-brand-400: #34c7a6;
+  --color-brand-500: #12a88a;
+  --color-brand-600: #0b8a72;
+  --color-brand-700: #0b6e5c;
+  --color-brand-800: #0d584b;
+  --color-brand-900: #0e483f;
+  --color-brand-950: #042a25;
+
+  /* Màu mực: xanh đêm cho thanh điều hướng & tiêu đề */
+  --color-ink-50: #f5f7fa;
+  --color-ink-100: #e9edf3;
+  --color-ink-200: #d3dae4;
+  --color-ink-300: #a9b5c6;
+  --color-ink-400: #7889a0;
+  --color-ink-500: #566a84;
+  --color-ink-600: #43546c;
+  --color-ink-700: #364458;
+  --color-ink-800: #233044;
+  --color-ink-900: #152033;
+  --color-ink-950: #0b1424;
+
+  --shadow-soft: 0 1px 2px rgb(11 20 36 / 0.04), 0 4px 16px -4px rgb(11 20 36 / 0.08);
+  --shadow-lift: 0 2px 4px rgb(11 20 36 / 0.05), 0 12px 32px -8px rgb(11 20 36 / 0.18);
+
+  --animate-fade-in: fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-rise: rise 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-sheet: sheet 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-pop: pop 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes sheet {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pop {
+  from { opacity: 0; transform: scale(0.96) translateY(6px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-[#f3f5f4] text-ink-900 antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+  ::selection {
+    @apply bg-brand-200 text-brand-950;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-500;
+  }
+}
+
+/* Thẻ nền trắng chuẩn */
+@utility surface {
+  @apply bg-white rounded-2xl ring-1 ring-ink-900/[0.06] shadow-soft;
+}
+
+/* Số liệu canh đều */
+@utility tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Hoa văn lục giác (vòng benzen) cho phần đầu trang */
+@utility hex-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath d='M28 1 54 16v31L28 62 2 47V16zM28 62v35' fill='none' stroke='%23ffffff' stroke-opacity='0.07' stroke-width='1.2'/%3E%3C/svg%3E");
+  background-size: 56px 97px;
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility pb-safe {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+
+/* Tương thích tên lớp cũ */
+.animate-fadeIn { animation: fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-scaleUp { animation: pop 0.22s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* In thời khoá biểu gọn gàng */
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff; }
+  .surface { box-shadow: none; }
+}

@@ -1,0 +1,64 @@
+{
+  "entities": {
+    "schedules": {
+      "title": "ScheduleItem",
+      "description": "Chemistry faculty class schedules and lab sessions",
+      "type": "object",
+      "properties": {
+        "courseCode": { "type": "string" },
+        "courseName": { "type": "string" },
+        "className": { "type": "string" },
+        "classType": { "type": "string" },
+        "dayOfWeek": { "type": "string" },
+        "startPeriod": { "type": "number" },
+        "numPeriods": { "type": "number" },
+        "timeRange": { "type": "string" },
+        "room": { "type": "string" },
+        "campus": { "type": "string" },
+        "lecturer": { "type": "string" },
+        "lecturerEmail": { "type": "string" },
+        "department": { "type": "string" },
+        "startDate": { "type": "string" },
+        "endDate": { "type": "string" },
+        "durationWeeks": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["courseCode", "courseName", "className", "dayOfWeek", "startPeriod", "numPeriods", "room", "campus", "lecturer", "startDate", "endDate"]
+    },
+    "faculty": {
+      "title": "FacultyMember",
+      "description": "Faculty lecturers in Chemistry department",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "department": { "type": "string" }
+      },
+      "required": ["id", "name"]
+    },
+    "app_settings": {
+      "title": "AppSettings",
+      "description": "Application settings including department list",
+      "type": "object",
+      "properties": {
+        "list": { "type": "array" },
+        "updatedAt": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/schedules/{scheduleId}": {
+      "schema": "#/entities/schedules",
+      "description": "Public schedule items for reading, admin write"
+    },
+    "/faculty/{facultyId}": {
+      "schema": "#/entities/faculty",
+      "description": "Faculty members directory"
+    },
+    "/app_settings/{docId}": {
+      "schema": "#/entities/app_settings",
+      "description": "Application settings and configurations"
+    }
+  }
+}

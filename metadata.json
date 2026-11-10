@@ -1,0 +1,6 @@
+{
+  "name": "Chemistry Schedule",
+  "description": "Hệ thống quản lý thời khóa biểu giảng dạy và lịch công tác cho Giảng viên Khoa Hóa học (Văn phòng Khoa quản lý và phân công).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
