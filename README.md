@@ -1,20 +1,22 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Lịch giảng dạy · Khoa Hoá học HCMUS
 
-# Run and deploy your AI Studio app
+Ứng dụng web xem thời khoá biểu giảng dạy, lịch cá nhân, lịch lớp sinh viên và lịch phòng thí nghiệm
+của Khoa Hoá học – Trường ĐH Khoa học Tự nhiên, ĐHQG-HCM. Dữ liệu đọc trực tiếp từ Google Sheet của Văn phòng Khoa.
 
-This contains everything you need to run your app locally.
+## Cập nhật dữ liệu
+Chỉ cần sửa Google Sheet. Trang web tự tải dữ liệu mới mỗi lần mở (hoặc bấm nút **Cập nhật**).
+Bảng tính phải được chia sẻ ở chế độ *Bất kỳ ai có đường liên kết đều có thể xem*.
 
-View your app in AI Studio: https://ai.studio/apps/389f8d3a-48ae-4b88-af04-40f713f8aeab
+## Đăng trang lên GitHub Pages
+1. Tạo repo mới, đưa toàn bộ thư mục này lên (trừ `node_modules`, `dist`, `_ban_goc_truoc_khi_nang_cap`).
+2. Vào **Settings → Pages → Build and deployment → Source**, chọn **GitHub Actions**.
+3. Đợi 1–2 phút ở tab **Actions**; trang sẽ có địa chỉ `https://<tên-tài-khoản>.github.io/<tên-repo>/`.
 
-## Run Locally
+Mỗi lần đưa code mới lên nhánh `main`, trang sẽ tự build lại.
 
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Chạy thử trên máy
+Cần Node.js 20 trở lên.
+```
+npm install
+npm run dev
+```
