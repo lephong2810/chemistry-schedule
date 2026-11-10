@@ -5,7 +5,8 @@ import {
   getPeriodStartTime,
   getPeriodEndTime,
   inferPeriodsFromTimes,
-  normalizeDayOfWeek
+  normalizeDayOfWeek,
+  parseMultipleLecturers
 } from './periodConverter';
 
 export const DAYS = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'] as const;
@@ -153,7 +154,9 @@ export function prettySubject(name?: string): string {
 /** Bỏ học hàm học vị: "PGS.TS. Lê Tiến Khoa" -> "Lê Tiến Khoa" */
 export function stripTitle(name?: string): string {
   return (name || '')
+    .replace(/\([^)]*\)/g, '')
     .replace(/^((GS|PGS|TS|ThS|CN|KS|BS|DS|NCS|Th\.S)\.?\s*)+/gi, '')
+    .replace(/^(Thầy|Cô)\s+/i, '')
     .replace(/^[.\s]+/, '')
     .trim();
 }
@@ -307,9 +310,5 @@ export function liveStatus(item: ScheduleItem, now = nowMinutes()): LiveStatus {
 export function lecturerLine(item: ScheduleItem): string {
   const raw = (item.lecturerName || '').trim();
   if (!raw) return '';
-  return raw
-    .split(/[,;\n]+/)
-    .map(s => s.trim())
-    .filter(Boolean)
-    .join(' · ');
+  return parseMultipleLecturers(raw).join(' · ');
 }

@@ -424,10 +424,35 @@ export function formatPeriodWithTime(
  */
 export function parseMultipleLecturers(lecturerString?: string): string[] {
   if (!lecturerString) return [];
-  return lecturerString
-    .split(/[,;\n]+/)
-    .map(s => s.trim())
-    .filter(s => s.length > 0);
+  // Tách theo dấu , ; hoặc xuống dòng — nhưng KHÔNG tách bên trong ngoặc,
+  // ví dụ "GS.TS. Nguyễn Trung Nhân (NMR,MS)" vẫn là 1 người.
+  const out: string[] = [];
+  let depth = 0;
+  let cur = '';
+  for (const ch of lecturerString) {
+    if (ch === '(') depth++;
+    if (ch === ')') depth = Math.max(0, depth - 1);
+    if (depth === 0 && (ch === ',' || ch === ';' || ch === '\n')) {
+      if (cur.trim()) out.push(cur.trim());
+      cur = '';
+    } else {
+      cur += ch;
+    }
+  }
+  if (cur.trim()) out.push(cur.trim());
+  return out;
+}
+
+/**
+ * Tên giảng viên gọn để đưa vào danh sách chọn: bỏ ghi chú trong ngoặc ("(NMR,MS)", "(phụ trách bài tập)"),
+ * thống nhất cách viết học hàm ("PGS. TS." -> "PGS.TS.").
+ */
+export function cleanLecturerName(name?: string): string {
+  return (name || '')
+    .replace(/\([^)]*\)/g, '')
+    .replace(/\b(GS|PGS)\.\s+TS\./g, '$1.TS.')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /**
@@ -531,7 +556,7 @@ export function extractCodeAndName(input: string): { code?: string; name: string
  */
 export function normalizePersonName(name?: string): string {
   if (!name) return '';
-  let clean = name.trim();
+  let clean = name.replace(/\([^)]*\)/g, ' ').trim();
 
   // 1. Loại bỏ tiền tố mã cán bộ dạng [CB20], CB20 -, CB01:, vv.
   clean = clean.replace(/^\[[^\]]+\]\s*/i, '');
