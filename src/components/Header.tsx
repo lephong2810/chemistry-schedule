@@ -1,4 +1,5 @@
-import React from 'react';
+/// <reference types="vite/client" />
+import React, { useEffect, useState } from 'react';
 import { CalendarDays, FlaskConical, GraduationCap, RefreshCw, UserRound } from 'lucide-react';
 import { TabType } from '../types';
 import { cx } from './ui';
@@ -18,7 +19,17 @@ interface HeaderProps {
   onRefreshSheet: () => void;
 }
 
-export const BrandMark: React.FC<{ className?: string }> = ({ className }) => (
+/**
+ * LOGO CỦA TRANG
+ * Muốn dùng logo riêng: upload ảnh vuông tên "logo.png" vào thư mục "public" ở gốc repo.
+ * - Có public/logo.png  -> dùng ảnh đó cho thanh tiêu đề và biểu tượng tab trình duyệt.
+ * - Chưa có             -> dùng logo vẽ sẵn bên dưới (DefaultMark).
+ * Muốn đổi tên tệp (vd. logo.svg, logo.jpg) thì sửa LOGO_FILE.
+ */
+const LOGO_FILE = 'logo.png';
+const LOGO_URL = `${import.meta.env.BASE_URL}${LOGO_FILE}`;
+
+const DefaultMark: React.FC<{ className?: string }> = ({ className }) => (
   <svg viewBox="0 0 40 40" className={className} aria-hidden="true">
     <defs>
       <linearGradient id="bm" x1="0" y1="0" x2="1" y2="1">
@@ -32,7 +43,38 @@ export const BrandMark: React.FC<{ className?: string }> = ({ className }) => (
   </svg>
 );
 
+export const BrandMark: React.FC<{ className?: string }> = ({ className }) => {
+  const [hasLogo, setHasLogo] = useState(true);
+  if (!hasLogo) return <DefaultMark className={className} />;
+  return (
+    <img
+      src={LOGO_URL}
+      alt="Logo"
+      className={cx(className, 'rounded-xl object-contain bg-white p-0.5')}
+      onError={() => setHasLogo(false)}
+    />
+  );
+};
+
+/** Nếu có logo riêng thì dùng luôn làm biểu tượng tab trình duyệt */
+function useLogoFavicon() {
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => {
+      let link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+      }
+      link.href = LOGO_URL;
+    };
+    img.src = LOGO_URL;
+  }, []);
+}
+
 export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, isSyncing, lastSyncTime, onRefreshSheet }) => {
+  useLogoFavicon();
   return (
     <>
       <header className="no-print sticky top-0 z-40 bg-ink-950/95 backdrop-blur-md text-white border-b border-white/5">
