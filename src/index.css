@@ -130,12 +130,5 @@
   }
   /* Thu nhỏ lưới tuần để gói trong 1 trang A4 (kể cả khi bật đầu trang/chân trang của trình duyệt) */
   .print-fit { zoom: 0.68; break-inside: avoid; }
-  /* Phân biệt cơ sở khi in trắng đen: CS1 nền trơn, CS2 nền gạch chéo + khung nét đứt */
-  .wt-block, .print-swatch { box-shadow: none !important; border: 1px solid #1f2937; }
-  .campus-cs1 { background: #fff !important; }
-  .campus-cs2 {
-    background: #fff repeating-linear-gradient(135deg, rgb(0 0 0 / 0.16) 0 1.5px, transparent 1.5px 6px) !important;
-    border-style: dashed;
-  }
   .print-fit .sticky { position: static !important; }
 }
