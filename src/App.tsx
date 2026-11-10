@@ -15,8 +15,7 @@ import { isLecturerAssignedToItem, normalizeDayOfWeek } from './utils/periodConv
 import {
   fetchScheduleFromGoogleSheet,
   getLastSyncTime,
-  parseGoogleSheetCSV,
-  DEFAULT_CHEMISTRY_CSV,
+  loadCachedSchedule,
   ParseResult
 } from './services/googleSheetService';
 import {
@@ -68,11 +67,14 @@ export default function App() {
   const [showEmptyDays, setShowEmptyDays] = useState<boolean>(false);
 
   // Dữ liệu
-  const initialParsed = useMemo(() => parseGoogleSheetCSV(DEFAULT_CHEMISTRY_CSV), []);
-  const [scheduleList, setScheduleList] = useState<ScheduleItem[]>(initialParsed.items);
-  const [facultyList, setFacultyList] = useState<FacultyMember[]>(initialParsed.facultyList);
+  // Mở trang là hiện ngay dữ liệu thật đã lưu từ lần trước; lần đầu tiên thì hiện khung chờ (không hiện dữ liệu mẫu)
+  const initialParsed = useMemo(() => loadCachedSchedule(), []);
+  const [scheduleList, setScheduleList] = useState<ScheduleItem[]>(initialParsed?.items ?? []);
+  const [facultyList, setFacultyList] = useState<FacultyMember[]>(
+    initialParsed?.facultyList ?? [{ id: 'all', name: 'Tất cả giảng viên Khoa Hóa', email: '', department: 'Khoa Hóa học' }]
+  );
   const [isSyncing, setIsSyncing] = useState<boolean>(true);
-  const [hasLoaded, setHasLoaded] = useState<boolean>(false);
+  const [hasLoaded, setHasLoaded] = useState<boolean>(!!initialParsed);
   const [lastSyncTime, setLastSyncState] = useState<string>(() => getLastSyncTime());
   const [toast, setToast] = useState<string | null>(null);
 
@@ -290,10 +292,10 @@ export default function App() {
                   </p>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 lg:w-[520px] animate-rise [animation-delay:80ms]">
-                  <StatTile dark label="Buổi / tuần" value={activeItems.length} />
-                  <StatTile dark label="Giảng viên" value={stats.lecturers} />
-                  <StatTile dark label="Lớp SV" value={stats.classes} />
-                  <StatTile dark label="Phòng" value={stats.rooms} />
+                  <StatTile dark label="Buổi / tuần" value={hasLoaded ? activeItems.length : '…'} />
+                  <StatTile dark label="Giảng viên" value={hasLoaded ? stats.lecturers : '…'} />
+                  <StatTile dark label="Lớp SV" value={hasLoaded ? stats.classes : '…'} />
+                  <StatTile dark label="Phòng" value={hasLoaded ? stats.rooms : '…'} />
                 </div>
               </div>
             </div>
@@ -396,7 +398,18 @@ export default function App() {
             )}
 
             {/* Lưới theo ngày */}
-            {daysToDisplay.length === 0 ? (
+            {!hasLoaded ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 items-start" aria-busy="true" aria-label="Đang tải thời khoá biểu">
+                {[0, 1, 2].map(i => (
+                  <div key={i} className="rounded-3xl p-3 bg-ink-100/50 space-y-2.5">
+                    <div className="h-5 w-24 rounded-md bg-ink-200/70 animate-pulse" />
+                    {[0, 1, 2].map(j => (
+                      <div key={j} className="h-36 rounded-2xl bg-white ring-1 ring-ink-900/[0.05] animate-pulse" />
+                    ))}
+                  </div>
+                ))}
+              </div>
+            ) : daysToDisplay.length === 0 ? (
               <div className="surface px-6 py-14 text-center animate-rise">
                 <div className="mx-auto mb-4 grid place-items-center w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 ring-1 ring-amber-100">
                   <SearchX className="w-6 h-6" />
