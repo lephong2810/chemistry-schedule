@@ -55,7 +55,7 @@ export const WeekTimetable: React.FC<Props> = ({ items, onSelect, secondary = 'c
   return (
     <>
       {/* ============ Điện thoại: chọn ngày + danh sách ============ */}
-      <div className="md:hidden space-y-3">
+      <div className="md:hidden print:hidden space-y-3">
         <div className="surface p-1.5 grid grid-cols-7 gap-1">
           {DAYS.map(d => {
             const n = byDay[d].length;
@@ -139,8 +139,8 @@ export const WeekTimetable: React.FC<Props> = ({ items, onSelect, secondary = 'c
       </div>
 
       {/* ============ Máy tính: lưới tuần theo giờ ============ */}
-      <div className="hidden md:block surface overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="hidden md:block print:block surface overflow-hidden print-fit">
+        <div className="overflow-x-auto print:overflow-visible">
           <div style={{ minWidth: visibleDays.length * 132 + 64 }}>
             {/* Hàng tiêu đề thứ */}
             <div className="flex border-b border-ink-100 bg-white sticky top-0 z-20">
@@ -207,7 +207,7 @@ export const WeekTimetable: React.FC<Props> = ({ items, onSelect, secondary = 'c
                   return (
                     <div key={d} className={cx('relative border-l border-ink-100', isToday && 'bg-brand-50/40')}>
                       {isToday && now >= GRID_START && now <= GRID_END && (
-                        <div className="absolute left-0 right-0 z-10 pointer-events-none" style={{ top: px(now) }}>
+                        <div className="absolute left-0 right-0 z-10 pointer-events-none print:hidden" style={{ top: px(now) }}>
                           <div className="relative h-0.5 bg-rose-500">
                             <span className="absolute -left-1 -top-[3px] w-2 h-2 rounded-full bg-rose-500" />
                           </div>
@@ -281,7 +281,7 @@ export const WeekTimetable: React.FC<Props> = ({ items, onSelect, secondary = 'c
               <span className="w-2.5 h-2.5 rounded-sm bg-rose-100 ring-1 ring-rose-300" /> Trùng giờ
             </span>
           </div>
-          <span className="inline-flex items-center gap-1.5">
+          <span className="inline-flex items-center gap-1.5 print:hidden">
             <span className="w-3 h-0.5 bg-rose-500 rounded" /> Thời điểm hiện tại
           </span>
         </div>

@@ -149,7 +149,7 @@ export const Notice: React.FC<{
     brand: 'bg-brand-50 ring-brand-200 text-brand-900 [&_svg]:text-brand-600'
   }[tone];
   return (
-    <div className={cx('rounded-xl ring-1 ring-inset px-3.5 py-2.5 text-[13px] leading-relaxed', t)}>
+    <div className={cx('rounded-xl ring-1 ring-inset px-3.5 py-2.5 text-[13px] leading-relaxed print:hidden', t)}>
       <div className="flex items-start gap-2.5">
         <span className="mt-0.5 shrink-0">{icon}</span>
         <div className="flex-1 min-w-0">{children}</div>
@@ -180,3 +180,22 @@ export const StatTile: React.FC<{ label: string; value: React.ReactNode; hint?: 
     {hint && <div className={cx('text-[11px] mt-0.5', dark ? 'text-ink-400' : 'text-ink-400')}>{hint}</div>}
   </div>
 );
+
+/** Tiêu đề chỉ hiện khi in (ẩn trên màn hình) */
+export const PrintHeader: React.FC<{ title: string; subtitle?: string }> = ({ title, subtitle }) => {
+  const d = new Date();
+  const date = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+  return (
+    <div className="hidden print:flex items-end justify-between gap-4 mb-2 pb-2 border-b-2 border-ink-900">
+      <div>
+        <div className="text-lg font-extrabold text-ink-900 leading-tight">{title}</div>
+        {subtitle && <div className="text-xs text-ink-600">{subtitle}</div>}
+      </div>
+      <div className="text-right text-[10px] text-ink-500 leading-snug">
+        Khoa Hoá học · Trường ĐH Khoa học Tự nhiên, ĐHQG-HCM
+        <br />
+        In ngày {date}
+      </div>
+    </div>
+  );
+};

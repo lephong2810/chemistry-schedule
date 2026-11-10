@@ -6,7 +6,7 @@ import { groupByDay, findConflicts, weekStats } from '../utils/weekLayout';
 import { prettySubject } from '../utils/display';
 import { WeekTimetable } from './WeekTimetable';
 import { LecturerPicker } from './LecturerPicker';
-import { Avatar, Button, EmptyState, Notice, StatTile, cx } from './ui';
+import { Avatar, Button, EmptyState, Notice, PrintHeader, StatTile, cx } from './ui';
 
 export const MY_LECTURER_KEY = 'chem_my_lecturer_v1';
 
@@ -115,9 +115,9 @@ export const PersonalScheduleView: React.FC<PersonalScheduleViewProps> = ({
   }
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-5 sm:pt-7 space-y-4">
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-5 sm:pt-7 space-y-4 print:p-0 print:max-w-none">
       {/* Thẻ hồ sơ */}
-      <section className="surface overflow-visible animate-rise">
+      <section className="surface overflow-visible animate-rise print:hidden">
         <div className="relative rounded-t-2xl bg-ink-950 hex-pattern h-20 sm:h-24 overflow-hidden">
           <div className="absolute -top-20 -right-10 w-72 h-72 rounded-full bg-brand-500/30 blur-3xl" />
         </div>
@@ -210,6 +210,10 @@ export const PersonalScheduleView: React.FC<PersonalScheduleViewProps> = ({
         />
       ) : (
         <div className={cx('animate-rise')}>
+          <PrintHeader
+            title={`Lịch giảng dạy · ${current.name}`}
+            subtitle={`${stats.total} buổi/tuần · ${Number.isInteger(stats.periods) ? stats.periods : stats.periods.toFixed(1)} tiết/tuần · CS1: ${stats.cs1} buổi · CS2: ${stats.cs2} buổi`}
+          />
           <WeekTimetable items={items} onSelect={onSelect} secondary="class" />
         </div>
       )}

@@ -5,7 +5,7 @@ import { groupByDay, weekStats } from '../utils/weekLayout';
 import { DAYS, DAY_LONG, campusMeta, cleanRoom } from '../utils/display';
 import { WeekTimetable } from './WeekTimetable';
 import { ScheduleCard } from './ScheduleCard';
-import { EmptyState, Segmented, StatTile, cx } from './ui';
+import { EmptyState, PrintHeader, Segmented, StatTile, cx } from './ui';
 
 interface RoomScheduleViewProps {
   scheduleItems: ScheduleItem[];
@@ -49,7 +49,7 @@ export const RoomScheduleView: React.FC<RoomScheduleViewProps> = ({ scheduleItem
 
   return (
     <main>
-      <section className="relative bg-ink-950 text-white overflow-hidden">
+      <section className="relative bg-ink-950 text-white overflow-hidden print:hidden">
         <div className="absolute inset-0 hex-pattern opacity-80" />
         <div className="absolute -bottom-32 right-10 w-96 h-96 rounded-full bg-emerald-500/20 blur-3xl" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-7 sm:pt-10 pb-8">
@@ -102,7 +102,7 @@ export const RoomScheduleView: React.FC<RoomScheduleViewProps> = ({ scheduleItem
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-5 space-y-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-5 space-y-4 print:p-0 print:max-w-none">
         {rooms.length === 0 ? (
           <EmptyState
             icon={<FlaskConical className="w-7 h-7" />}
@@ -111,7 +111,7 @@ export const RoomScheduleView: React.FC<RoomScheduleViewProps> = ({ scheduleItem
           />
         ) : (
           <>
-            <section className="surface p-3.5 sm:p-4 animate-rise">
+            <section className="surface p-3.5 sm:p-4 animate-rise print:hidden">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 <StatTile label="Ca thực hành" value={items.length} />
                 <StatTile label="Có giờ cụ thể" value={timed} />
@@ -132,7 +132,10 @@ export const RoomScheduleView: React.FC<RoomScheduleViewProps> = ({ scheduleItem
             </section>
 
             {layout === 'timetable' && timed > 0 ? (
-              <WeekTimetable items={items} onSelect={onSelect} secondary="lecturer" />
+              <div>
+                <PrintHeader title={`Lịch phòng thí nghiệm · ${cleanRoom(selectedRoom)}`} subtitle={`${items.length} ca thực hành`} />
+                <WeekTimetable items={items} onSelect={onSelect} secondary="lecturer" />
+              </div>
             ) : (
               <div className="space-y-6">
                 {DAYS.filter(d => byDay[d].length).map(d => (

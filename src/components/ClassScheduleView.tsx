@@ -17,7 +17,7 @@ import { groupByDay, findConflicts, weekStats } from '../utils/weekLayout';
 import { DAYS, DAY_LONG, classWeek, prettySubject, vnDate } from '../utils/display';
 import { WeekTimetable } from './WeekTimetable';
 import { ScheduleCard } from './ScheduleCard';
-import { Button, EmptyState, Notice, Segmented, StatTile, cx } from './ui';
+import { Button, EmptyState, Notice, PrintHeader, Segmented, StatTile, cx } from './ui';
 
 interface ClassScheduleViewProps {
   scheduleItems: ScheduleItem[];
@@ -115,7 +115,7 @@ export const ClassScheduleView: React.FC<ClassScheduleViewProps> = ({
   return (
     <main>
       {/* Phần đầu: chọn lớp */}
-      <section className="relative bg-ink-950 text-white">
+      <section className="relative bg-ink-950 text-white print:hidden">
         <div className="absolute inset-0 hex-pattern opacity-80 overflow-hidden" />
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-28 left-1/3 w-96 h-96 rounded-full bg-brand-500/20 blur-3xl" />
@@ -251,7 +251,7 @@ export const ClassScheduleView: React.FC<ClassScheduleViewProps> = ({
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-5 space-y-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-5 space-y-4 print:p-0 print:max-w-none">
         {!selectedClass ? (
           /* Chưa chọn lớp: duyệt theo khoá */
           <section className="surface p-4 sm:p-6 animate-rise">
@@ -348,7 +348,13 @@ export const ClassScheduleView: React.FC<ClassScheduleViewProps> = ({
                 description="Lớp này chưa được xếp môn nào trong bảng tính."
               />
             ) : layout === 'timetable' ? (
-              <WeekTimetable items={items} onSelect={onSelect} secondary="lecturer" />
+              <div>
+                <PrintHeader
+                  title={`Thời khoá biểu lớp ${selectedClass}`}
+                  subtitle={`${subjects} môn · ${stats.total} buổi/tuần${wk ? ` · tuần ${wk.current}${wk.total ? '/' + wk.total : ''}` : ''}`}
+                />
+                <WeekTimetable items={items} onSelect={onSelect} secondary="lecturer" />
+              </div>
             ) : (
               <div className="space-y-6">
                 {DAYS.filter(d => byDay[d].length).map(d => (
