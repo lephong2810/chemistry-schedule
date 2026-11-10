@@ -190,6 +190,17 @@ export const PrintHeader: React.FC<{ title: string; subtitle?: string }> = ({ ti
       <div>
         <div className="text-lg font-extrabold text-ink-900 leading-tight">{title}</div>
         {subtitle && <div className="text-xs text-ink-600">{subtitle}</div>}
+        <div className="mt-1 flex items-center gap-4 text-[10px] text-ink-700">
+          <span className="inline-flex items-center gap-1.5">
+            <span className="print-swatch campus-cs1 inline-block w-5 h-3 rounded-sm" />
+            <b className="rounded px-1 text-[9px] font-black ring-1 ring-inset ring-ink-900">CS1</b> Chợ Quán · nền trơn
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <span className="print-swatch campus-cs2 inline-block w-5 h-3 rounded-sm" />
+            <b className="rounded px-1 text-[9px] font-black bg-ink-900 text-white">CS2</b> Đông Hoà · nền gạch chéo
+          </span>
+          <span>⚠ trùng giờ</span>
+        </div>
       </div>
       <div className="text-right text-[10px] text-ink-500 leading-snug">
         Khoa Hoá học · Trường ĐH Khoa học Tự nhiên, ĐHQG-HCM

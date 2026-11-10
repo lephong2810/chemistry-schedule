@@ -154,12 +154,12 @@ export const WeekTimetable: React.FC<Props> = ({ items, onSelect, secondary = 'c
                       <div
                         className={cx(
                           'inline-flex flex-col items-center rounded-xl px-3 py-1',
-                          isToday && 'bg-ink-900 text-white'
+                          isToday && 'bg-ink-900 text-white print:bg-transparent print:text-ink-900'
                         )}
                       >
                         <span className={cx('text-sm font-extrabold', !isToday && 'text-ink-900')}>{DAY_LONG[d]}</span>
-                        <span className={cx('text-[10px] font-semibold', isToday ? 'text-brand-300' : n ? 'text-ink-400' : 'text-ink-300')}>
-                          {isToday ? 'Hôm nay · ' : ''}
+                        <span className={cx('text-[10px] font-semibold', isToday ? 'text-brand-300 print:text-ink-500' : n ? 'text-ink-400' : 'text-ink-300')}>
+                          {isToday ? <span className="print:hidden">Hôm nay · </span> : ''}
                           {n ? `${n} buổi` : 'Trống'}
                         </span>
                       </div>
@@ -205,7 +205,7 @@ export const WeekTimetable: React.FC<Props> = ({ items, onSelect, secondary = 'c
                   const isToday = d === today;
                   const positioned = layoutDay(byDay[d]);
                   return (
-                    <div key={d} className={cx('relative border-l border-ink-100', isToday && 'bg-brand-50/40')}>
+                    <div key={d} className={cx('relative border-l border-ink-100', isToday && 'bg-brand-50/40 print:bg-transparent')}>
                       {isToday && now >= GRID_START && now <= GRID_END && (
                         <div className="absolute left-0 right-0 z-10 pointer-events-none print:hidden" style={{ top: px(now) }}>
                           <div className="relative h-0.5 bg-rose-500">
@@ -228,7 +228,8 @@ export const WeekTimetable: React.FC<Props> = ({ items, onSelect, secondary = 'c
                             onClick={() => onSelect(p.item)}
                             title={`${prettySubject(p.item.subjectName)}\n${minutesToHHMM(p.start)}–${minutesToHHMM(p.end)} · ${cm.short} ${room}\n${sub || ''}`}
                             className={cx(
-                              'absolute rounded-xl ring-1 ring-inset text-left overflow-hidden transition-all cursor-pointer',
+                              'wt-block absolute rounded-xl ring-1 ring-inset text-left overflow-hidden transition-all cursor-pointer',
+                              p.item.campus === 'cs2' ? 'campus-cs2' : 'campus-cs1',
                               'hover:z-10 hover:shadow-lift hover:-translate-y-px focus-visible:z-10',
                               p.conflict ? 'bg-rose-50 hover:bg-rose-100 ring-rose-300 text-rose-950' : cm.block
                             )}
@@ -245,14 +246,17 @@ export const WeekTimetable: React.FC<Props> = ({ items, onSelect, secondary = 'c
                                 <span>
                                   {minutesToHHMM(p.start)}–{minutesToHHMM(p.end)}
                                 </span>
-                                {p.conflict && <AlertTriangle className="w-3 h-3 text-rose-600 shrink-0" />}
+                                <span className="flex items-center gap-1 shrink-0">
+                                  {p.conflict && <AlertTriangle className="w-3 h-3 text-rose-600" />}
+                                  <CampusTag campus={p.item.campus} />
+                                </span>
                               </span>
                               <span className={cx('block font-bold leading-snug text-ink-900 mt-0.5', compact ? 'text-[11px] line-clamp-2' : 'text-[12.5px] line-clamp-3')}>
                                 {prettySubject(p.item.subjectName)}
                               </span>
-                              {!compact && (
+                              {(!compact || h >= 70) && (
                                 <span className="block mt-1 text-[11px] font-semibold opacity-80 truncate">
-                                  {cm.short} · {room || 'Chưa có phòng'}
+                                  {compact ? room || '—' : `${cm.short} · ${room || 'Chưa có phòng'}`}
                                 </span>
                               )}
                               {!compact && sub && <span className="block text-[10.5px] opacity-70 truncate">{sub}</span>}
@@ -269,7 +273,7 @@ export const WeekTimetable: React.FC<Props> = ({ items, onSelect, secondary = 'c
         </div>
 
         {/* Chú giải */}
-        <div className="flex items-center justify-between flex-wrap gap-2 px-4 py-2.5 border-t border-ink-100 bg-ink-50/50 text-[11px] text-ink-500">
+        <div className="flex items-center justify-between flex-wrap gap-2 px-4 py-2.5 border-t border-ink-100 bg-ink-50/50 text-[11px] text-ink-500 print:hidden">
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-sm bg-brand-100 ring-1 ring-brand-300" /> CS1 · Chợ Quán
@@ -289,3 +293,11 @@ export const WeekTimetable: React.FC<Props> = ({ items, onSelect, secondary = 'c
     </>
   );
 };
+
+/** Nhãn cơ sở: CS1 viền đen chữ đen, CS2 nền đen chữ trắng — phân biệt được cả khi in trắng đen */
+export const CampusTag: React.FC<{ campus?: string }> = ({ campus }) =>
+  campus === 'cs2' ? (
+    <span className="rounded px-1 text-[9px] font-black leading-[14px] bg-ink-900 text-white">CS2</span>
+  ) : (
+    <span className="rounded px-1 text-[9px] font-black leading-[14px] bg-white text-ink-900 ring-1 ring-inset ring-ink-900">CS1</span>
+  );
