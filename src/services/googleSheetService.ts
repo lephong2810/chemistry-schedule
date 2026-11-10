@@ -47,6 +47,22 @@ export const PERMANENT_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1BZ3M
 const STORAGE_KEY_CACHED_SCHEDULE = 'chemistry_cached_schedule_v4';
 const STORAGE_KEY_LAST_SYNC = 'chemistry_last_sync_time_v4';
 
+/**
+ * Đọc ngay dữ liệu thật đã lưu từ lần mở trước (không chờ mạng).
+ * Trả về null nếu máy này chưa từng tải được dữ liệu.
+ */
+export function loadCachedSchedule(): ParseResult | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const csv = localStorage.getItem(STORAGE_KEY_CACHED_SCHEDULE);
+    if (!csv) return null;
+    const parsed = parseGoogleSheetCSV(csv);
+    return parsed.items.length > 0 ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
 export function getLastSyncTime(): string {
   if (typeof window === 'undefined') return '';
   return localStorage.getItem(STORAGE_KEY_LAST_SYNC) || '';
