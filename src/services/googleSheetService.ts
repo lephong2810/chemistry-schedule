@@ -1,6 +1,6 @@
 import Papa from 'papaparse';
 import { ScheduleItem, FacultyMember } from '../types';
-import { getPeriodStartTime, getPeriodEndTime, parseTimeAndPeriods, parsePeriodString } from '../utils/periodConverter';
+import { getPeriodStartTime, getPeriodEndTime, parseTimeAndPeriods, parsePeriodString, parseMultipleLecturers, cleanLecturerName, normalizePersonName } from '../utils/periodConverter';
 
 // Dữ liệu CSV mặc định 36 môn học chuẩn của Khoa Hóa học (được VP Khoa sử dụng trọn đời)
 export const DEFAULT_CHEMISTRY_CSV = `Mã môn,Tên môn học,Lớp,Thứ,Thời gian bắt đầu ,Thời gian kết thúc ,Cơ sở,Phòng,MSCB,Giảng viên,Email GV,Trợ giảng,Email Trợ giảng,Ngày bắt đầu áp dụng ,Ngày kết thúc áp dụng ,Thi GK,Thi CK,Ghi chú
@@ -448,38 +448,33 @@ export function parseGoogleSheetCSV(csvContent: string): ParseResult {
       });
     }
 
-    // Thu thập danh sách Giảng viên (tách dấu phẩy nếu nhiều GV cùng dạy)
+    // Thu thập danh sách Giảng viên & Trợ giảng vào một danh sách chung.
+    // - Không cắt tên ở dấu phẩy nằm trong ngoặc: "(NMR,MS)"
+    // - Bỏ ghi chú trong ngoặc khỏi tên hiển thị
+    // - Gộp các cách ghi khác nhau của cùng một người ("Cô Nguyễn Thị Ngân" = "ThS. Nguyễn Thị Ngân"),
+    //   ưu tiên cách ghi có học hàm, học vị
+    const addPerson = (rawName: string, code: string, email: string) => {
+      const name = cleanLecturerName(rawName);
+      const key = normalizePersonName(name);
+      if (!name || !key) return;
+      const id = `fac-${key.replace(/\s+/g, '-')}`;
+      const hasTitle = (n: string) => /^(GS|PGS|TS|ThS|CN|KS)\b/i.test(n);
+      const existing = facultyMap.get(id);
+      if (!existing) {
+        facultyMap.set(id, { id, name, code: code || '', email: email || '', department: 'Khoa Hóa học' });
+      } else {
+        if (!hasTitle(existing.name) && hasTitle(name)) existing.name = name;
+        if (!existing.code && code) existing.code = code;
+        if (!existing.email && email) existing.email = email;
+      }
+    };
     if (lecturerNameRaw) {
-      const names = lecturerNameRaw.split(/[,;\n]+/).map(n => n.trim()).filter(Boolean);
-      names.forEach(name => {
-        const id = `fac-${name.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
-        if (!facultyMap.has(id)) {
-          facultyMap.set(id, {
-            id,
-            name,
-            code: lecturerCodeRaw || '',
-            email: lecturerEmailRaw || '',
-            department: 'Khoa Hóa học'
-          });
-        }
-      });
+      const names = parseMultipleLecturers(lecturerNameRaw);
+      names.forEach(n => addPerson(n, names.length === 1 ? lecturerCodeRaw : '', names.length === 1 ? lecturerEmailRaw : ''));
     }
-
-    // Thu thập danh sách Trợ giảng
     if (assistantNameRaw) {
-      const names = assistantNameRaw.split(/[,;\n]+/).map(n => n.trim()).filter(Boolean);
-      names.forEach(name => {
-        const id = `fac-${name.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
-        if (!facultyMap.has(id)) {
-          facultyMap.set(id, {
-            id,
-            name,
-            code: '',
-            email: assistantEmailRaw || '',
-            department: 'Trợ giảng Khoa Hóa học'
-          });
-        }
-      });
+      const names = parseMultipleLecturers(assistantNameRaw);
+      names.forEach(n => addPerson(n, '', names.length === 1 ? assistantEmailRaw : ''));
     }
   }
 

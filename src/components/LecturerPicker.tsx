@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Check, ChevronDown, Search, Users, X } from 'lucide-react';
 import { FacultyMember } from '../types';
 import { Avatar, cx } from './ui';
-import { stripTitle, vnNameSortKey } from '../utils/display';
+import { vnNameSortKey } from '../utils/display';
 
 const fold = (s: string) =>
   s
@@ -213,12 +213,10 @@ export const LecturerPicker: React.FC<Props> = ({
                     )}
                     <span className="flex-1 min-w-0">
                       <span className={cx('block truncate text-sm', selected ? 'font-bold text-brand-800' : 'font-semibold text-ink-800')}>
-                        {f.id === 'all' ? f.name : stripTitle(f.name) || f.name}
+                        {f.name}
                       </span>
-                      {f.id !== 'all' && (
-                        <span className="block truncate text-[11px] text-ink-400">
-                          {[f.name.replace(stripTitle(f.name), '').trim(), f.code, f.department].filter(Boolean).join(' · ')}
-                        </span>
+                      {f.id !== 'all' && f.code && (
+                        <span className="block truncate text-[11px] text-ink-400">MSCB {f.code}</span>
                       )}
                     </span>
                     {selected && <Check className="w-4 h-4 text-brand-600 shrink-0" />}
