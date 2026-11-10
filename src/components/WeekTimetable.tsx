@@ -228,8 +228,7 @@ export const WeekTimetable: React.FC<Props> = ({ items, onSelect, secondary = 'c
                             onClick={() => onSelect(p.item)}
                             title={`${prettySubject(p.item.subjectName)}\n${minutesToHHMM(p.start)}–${minutesToHHMM(p.end)} · ${cm.short} ${room}\n${sub || ''}`}
                             className={cx(
-                              'wt-block absolute rounded-xl ring-1 ring-inset text-left overflow-hidden transition-all cursor-pointer',
-                              p.item.campus === 'cs2' ? 'campus-cs2' : 'campus-cs1',
+                              'absolute rounded-xl ring-1 ring-inset text-left overflow-hidden transition-all cursor-pointer',
                               'hover:z-10 hover:shadow-lift hover:-translate-y-px focus-visible:z-10',
                               p.conflict ? 'bg-rose-50 hover:bg-rose-100 ring-rose-300 text-rose-950' : cm.block
                             )}
@@ -246,10 +245,7 @@ export const WeekTimetable: React.FC<Props> = ({ items, onSelect, secondary = 'c
                                 <span>
                                   {minutesToHHMM(p.start)}–{minutesToHHMM(p.end)}
                                 </span>
-                                <span className="flex items-center gap-1 shrink-0">
-                                  {p.conflict && <AlertTriangle className="w-3 h-3 text-rose-600" />}
-                                  <CampusTag campus={p.item.campus} />
-                                </span>
+                                {p.conflict && <AlertTriangle className="w-3 h-3 text-rose-600 shrink-0" />}
                               </span>
                               <span className={cx('block font-bold leading-snug text-ink-900 mt-0.5', compact ? 'text-[11px] line-clamp-2' : 'text-[12.5px] line-clamp-3')}>
                                 {prettySubject(p.item.subjectName)}
@@ -293,11 +289,3 @@ export const WeekTimetable: React.FC<Props> = ({ items, onSelect, secondary = 'c
     </>
   );
 };
-
-/** Nhãn cơ sở: CS1 viền đen chữ đen, CS2 nền đen chữ trắng — phân biệt được cả khi in trắng đen */
-export const CampusTag: React.FC<{ campus?: string }> = ({ campus }) =>
-  campus === 'cs2' ? (
-    <span className="rounded px-1 text-[9px] font-black leading-[14px] bg-ink-900 text-white">CS2</span>
-  ) : (
-    <span className="rounded px-1 text-[9px] font-black leading-[14px] bg-white text-ink-900 ring-1 ring-inset ring-ink-900">CS1</span>
-  );
